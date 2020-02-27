@@ -4,7 +4,7 @@ networks:
   laravel:
 
 volumes:
-  movies-data:
+  movies-backend-data:
     driver: local
 
 services:
@@ -27,17 +27,14 @@ services:
     restart: unless-stopped
     tty: true
     volumes:
-      - movies-data:/var/lib/mysql
+      - movies-backend-data:/var/lib/mysql
     ports: 
       - "3306:3306"
     environment:
-      - MYSQL_DATABASE=movies
-      - MYSQL_USER=movies
-      - MYSQL_PASSWORD=coringa
-      - MYSQL_ROOT_PASSWORD=ironman
-      - SERVICE_TAG=dev
-      - SERVICE_NAME=mysql
-      - TZ=America/Sao_Paulo
+      MYSQL_DATABASE: movies
+      MYSQL_USER: movies
+      MYSQL_PASSWORD: coringa
+      MYSQL_ROOT_PASSWORD: ironman
     networks:
       - laravel
 
