@@ -1,0 +1,54 @@
+version: '3'
+
+networks:
+  laravel:
+
+volumes:
+  movies-data:
+    driver: local
+
+services:
+
+  nginx:
+    image: nginx:stable-alpine
+    ports: 
+      - "8080:80"
+    volumes:
+      - ./src:/var/www
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on: 
+      - php
+      - mysql
+    networks:
+      - laravel
+
+  mysql:
+    image: mysql:5.7.22
+    restart: unless-stopped
+    tty: true
+    volumes:
+      - movies-data:/var/lib/mysql
+    ports: 
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=movies
+      - MYSQL_USER=movies
+      - MYSQL_PASSWORD=coringa
+      - MYSQL_ROOT_PASSWORD=ironman
+      - SERVICE_TAG=dev
+      - SERVICE_NAME=mysql
+      - TZ=America/Sao_Paulo
+    networks:
+      - laravel
+
+  php:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: php
+    volumes:
+      - ./src:/var/www
+    ports: 
+      - "9000:9000"
+    networks:
+      - laravel
